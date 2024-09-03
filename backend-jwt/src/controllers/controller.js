@@ -3,21 +3,29 @@ import { generarJwt } from "../helpers/generar-jwt.js";
 
 export async function login(req, res) {
   const { username, password } = req.body;
-  const conexion = await newConnection();
-
+  
   try {
-    const [inicio] = await conexion.query(
+    // Conexión a la base de datos
+    const conexion = await newConnection();
+    
+    // Consulta a la base de datos
+    const [usuario] = await conexion.query(
       "SELECT * FROM users WHERE username = ? AND password = ?",
-      [username, password]);
+      [username, password]
+    );
 
-      const user = inicio[0]
+    const user = usuario[0]; // Tomamos el primer usuario encontrado
 
+    // Validación de usuario
     if (!user) {
       return res.status(401).json({ message: "Credenciales incorrectas" });
     }
-    // Generar token JWT
-    const token = await generarJwt(user.id);
+
+    // Generar token JWT de forma asíncrona
+    const token = await generarJwt(usuario[0].id);
+
     // Almacenar el token en la sesión del servidor
+    console.log(req.session)
     req.session.token = token;
 
     // Almacenar el token en una cookie segura
@@ -27,7 +35,7 @@ export async function login(req, res) {
       maxAge: 3600000, // Expiración en milisegundos (1 hora)
     });
 
-    return res.json({message: "Inicio de sesión exitoso" });
+    return res.json({ message: "Inicio de sesión exitoso" });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Error Inesperado" });

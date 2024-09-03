@@ -1,4 +1,3 @@
-// server.js
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
@@ -14,16 +13,21 @@ app.use(cors({
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE']
 }));
+
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(cookieParser());
-app.use(loginRouter);
+
+// Coloca este middleware antes de las rutas
 app.use(session({
     secret: 'session_secret_key', // Cambia esto por una clave secreta en producción
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false } // Usar 'true' si usas HTTPS
 }));
+
+// Asegúrate de que este middleware venga después de la configuración de la sesión
+app.use(loginRouter);
 
 // Servidor escuchando
 app.listen(PORT, () => {
