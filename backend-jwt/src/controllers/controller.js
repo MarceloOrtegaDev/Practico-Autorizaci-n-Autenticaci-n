@@ -42,6 +42,23 @@ export async function login(req, res) {
   }
 }
 
+export async function register(req, res){
+  const {username, password} = req.body
+  const conexion = await newConnection()
+  try {
+    const nuevoUsuario = await conexion.query("INSERT INTO users (username, password) VALUES (?, ?)", [username, password])
+    
+    if(!nuevoUsuario){
+      res.json({msg: "Error al crear el usuario"})
+    } else {
+      res.json(nuevoUsuario)
+    }
+  } catch (error) {
+    console.log("Error al crear el nuevo usuario")
+  }
+
+}
+
 export function session(req, res) {
   console.log(req.user);
   return res.json({
