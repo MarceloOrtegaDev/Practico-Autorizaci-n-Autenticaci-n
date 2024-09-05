@@ -20,9 +20,16 @@ export const login = async (req, res) => {
 }
 
 export const register = async (req, res) => {
+
     const { username, password } = req.body;
     const conexion = await newConnection()
+    const [usuarioRegistrado] = await conexion.query("Select * from users where username = ?", username)
+    if (usuarioRegistrado.length > 0) {
+        return res.status(409).json({ message: 'El nombre de usuario ya está en uso' });
+    }
+
     const [user] = await conexion.query("INSERT INTO users (username, password) VALUES (?,?)", [username, password]);
+
     if (user) {
         res.json({msg: "Usuario registrado correctamente"})
     } else {
