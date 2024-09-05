@@ -5,6 +5,7 @@ import { newConnection } from '../db/database.js';
 // Middleware para verificar el token JWT
 export async function verificarJwt(req, res, next) {
   const token = req.cookies.authToken || req.session.token;
+  console.log(token);
   const conexion = await newConnection();
 
   if (!token) {
