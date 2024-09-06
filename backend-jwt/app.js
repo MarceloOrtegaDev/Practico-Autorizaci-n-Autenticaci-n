@@ -3,7 +3,7 @@ import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import cors from 'cors';
 import morgan from 'morgan';
-import { PORT } from './src/config/env.js';
+import { variablesBd } from './src/config/config.js';
 import { loginRouter } from './src/routes/routes.js';
 
 const app = express();
@@ -20,7 +20,7 @@ app.use(cookieParser());
 
 // Coloca este middleware antes de las rutas
 app.use(session({
-    secret: 'session_secret_key', // Cambia esto por una clave secreta en producción
+    secret: variablesBd.SECRET_SESSION, // Cambia esto por una clave secreta en producción
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false } // Usar 'true' si usas HTTPS
@@ -30,6 +30,6 @@ app.use(session({
 app.use(loginRouter);
 
 // Servidor escuchando
-app.listen(PORT, () => {
-    console.log(`Servidor corriendo en http://localhost:${PORT}`);
+app.listen(variablesBd.PORT, () => {
+    console.log(`Servidor corriendo en http://localhost:${variablesBd.PORT}`);
 });
